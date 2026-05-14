@@ -125,28 +125,31 @@ function PsBadge({ status }) {
 function FallPsCard({ psData }) {
   if (!psData) return null;
   const Ps = [
-    { key: 'pain',          label: 'P — Pain',           icon: '🔴' },
-    { key: 'personal_needs',label: 'P — Personal Needs', icon: '🚽' },
-    { key: 'position',      label: 'P — Position',       icon: '🛏' },
-    { key: 'placement',     label: 'P — Placement',      icon: '📞' },
-    { key: 'prevent_falls', label: 'P — Prevent Falls',  icon: '⚠️' },
+    { key: 'patient', label: 'Patient',  desc: 'Who is affected',               icon: '👤' },
+    { key: 'problem', label: 'Problem',  desc: 'Condition, diagnosis, or issue', icon: '🩺' },
+    { key: 'plan',    label: 'Plan',     desc: 'Care or treatment approach',     icon: '📋' },
+    { key: 'purpose', label: 'Purpose',  desc: 'Goal or intended outcome',       icon: '🎯' },
+    { key: 'process', label: 'Process',  desc: 'How care is delivered',          icon: '⚙️' },
   ];
   return (
     <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
       <div className="flex items-center gap-2 px-6 py-3.5 border-b border-slate-100 bg-slate-50">
-        <span className="text-xs font-medium text-slate-500 uppercase tracking-widest">5-P Rounding Analysis — FP-001 §5.2</span>
+        <span className="text-xs font-medium text-slate-500 uppercase tracking-widest">Healthcare 5-P Analysis</span>
       </div>
       <div className="divide-y divide-slate-100">
-        {Ps.map(({ key, label, icon }) => {
+        {Ps.map(({ key, label, desc, icon }) => {
           const d = psData[key];
           if (!d) return null;
           return (
             <div key={key} className={`px-6 py-4 ${d.status === 'failed' ? 'bg-red-50/40' : ''}`}>
-              <div className="flex items-center justify-between mb-1.5">
-                <span className="text-xs font-semibold text-slate-700">{icon} {label}</span>
+              <div className="flex items-center justify-between mb-1">
+                <div>
+                  <span className="text-xs font-semibold text-slate-700">{icon} {label}</span>
+                  <span className="text-xs text-slate-400 ml-2">— {desc}</span>
+                </div>
                 <PsBadge status={d.status} />
               </div>
-              {d.finding && <p className="text-xs text-slate-600 leading-relaxed">{d.finding}</p>}
+              {d.finding && <p className="text-xs text-slate-600 leading-relaxed mt-1.5">{d.finding}</p>}
             </div>
           );
         })}
@@ -160,13 +163,12 @@ function FallAnalysisSection({ data }) {
   const [tab, setTab] = useState('overview');
   if (!data || !data.fall_event_ids?.length) return null;
 
+  const PS_KEYS = ['patient','problem','plan','purpose','process'];
+  const psLabels = { patient: 'Patient', problem: 'Problem', plan: 'Plan', purpose: 'Purpose', process: 'Process' };
   const failedPs = (data.five_ps_analysis || []).flatMap((e) =>
-    ['pain','personal_needs','position','placement','prevent_falls']
-      .filter((k) => e[k]?.status === 'failed')
-      .map((k) => k)
+    PS_KEYS.filter((k) => e[k]?.status === 'failed')
   );
   const psFailCounts = failedPs.reduce((acc, k) => { acc[k] = (acc[k] || 0) + 1; return acc; }, {});
-  const psLabels = { pain: 'Pain', personal_needs: 'Personal Needs', position: 'Position', placement: 'Placement', prevent_falls: 'Prevent Falls' };
 
   const tabs = [
     { id: 'overview',    label: 'Overview' },
@@ -233,7 +235,7 @@ function FallAnalysisSection({ data }) {
         {tab === 'overview' && (
           <div className="space-y-3">
             {(data.five_ps_analysis || []).map((ev) => {
-              const failed = ['pain','personal_needs','position','placement','prevent_falls'].filter((k) => ev[k]?.status === 'failed');
+              const failed = PS_KEYS.filter((k) => ev[k]?.status === 'failed');
               return (
                 <div key={ev.event_id} className="border border-slate-100 rounded-xl p-4 bg-slate-50">
                   <div className="flex items-center gap-2 mb-2">
@@ -243,7 +245,7 @@ function FallAnalysisSection({ data }) {
                     )}
                   </div>
                   <div className="flex gap-1.5 flex-wrap">
-                    {['pain','personal_needs','position','placement','prevent_falls'].map((k) => (
+                    {PS_KEYS.map((k) => (
                       <span key={k} className={`text-xs px-2 py-0.5 rounded font-medium ${
                         ev[k]?.status === 'failed'    ? 'bg-red-100 text-red-700 border border-red-200' :
                         ev[k]?.status === 'compliant' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' :

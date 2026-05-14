@@ -114,6 +114,236 @@ function PolicyGapSection({ data }) {
   );
 }
 
+// ── 5-P status badge ─────────────────────────────────────────────────────────
+function PsBadge({ status }) {
+  if (status === 'failed')    return <span className="text-xs font-medium px-2 py-0.5 rounded bg-red-700 text-white uppercase tracking-wide">Failed</span>;
+  if (status === 'compliant') return <span className="text-xs font-medium px-2 py-0.5 rounded bg-emerald-600 text-white uppercase tracking-wide">Compliant</span>;
+  return <span className="text-xs font-medium px-2 py-0.5 rounded bg-slate-200 text-slate-500 uppercase tracking-wide">Unknown</span>;
+}
+
+// ── Fall 5-Ps per-event (used in CaseFilePanel) ───────────────────────────────
+function FallPsCard({ psData }) {
+  if (!psData) return null;
+  const Ps = [
+    { key: 'pain',          label: 'P — Pain',           icon: '🔴' },
+    { key: 'personal_needs',label: 'P — Personal Needs', icon: '🚽' },
+    { key: 'position',      label: 'P — Position',       icon: '🛏' },
+    { key: 'placement',     label: 'P — Placement',      icon: '📞' },
+    { key: 'prevent_falls', label: 'P — Prevent Falls',  icon: '⚠️' },
+  ];
+  return (
+    <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <div className="flex items-center gap-2 px-6 py-3.5 border-b border-slate-100 bg-slate-50">
+        <span className="text-xs font-medium text-slate-500 uppercase tracking-widest">5-P Rounding Analysis — FP-001 §5.2</span>
+      </div>
+      <div className="divide-y divide-slate-100">
+        {Ps.map(({ key, label, icon }) => {
+          const d = psData[key];
+          if (!d) return null;
+          return (
+            <div key={key} className={`px-6 py-4 ${d.status === 'failed' ? 'bg-red-50/40' : ''}`}>
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-xs font-semibold text-slate-700">{icon} {label}</span>
+                <PsBadge status={d.status} />
+              </div>
+              {d.finding && <p className="text-xs text-slate-600 leading-relaxed">{d.finding}</p>}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ── Fall Analysis batch section (used in BriefingPanel) ───────────────────────
+function FallAnalysisSection({ data }) {
+  const [tab, setTab] = useState('overview');
+  if (!data || !data.fall_event_ids?.length) return null;
+
+  const failedPs = (data.five_ps_analysis || []).flatMap((e) =>
+    ['pain','personal_needs','position','placement','prevent_falls']
+      .filter((k) => e[k]?.status === 'failed')
+      .map((k) => k)
+  );
+  const psFailCounts = failedPs.reduce((acc, k) => { acc[k] = (acc[k] || 0) + 1; return acc; }, {});
+  const psLabels = { pain: 'Pain', personal_needs: 'Personal Needs', position: 'Position', placement: 'Placement', prevent_falls: 'Prevent Falls' };
+
+  const tabs = [
+    { id: 'overview',    label: 'Overview' },
+    { id: 'universal',   label: `Universal Precautions (${data.universal_precautions_failures?.length || 0})` },
+    { id: 'five_ps',     label: `5-P Analysis (${data.five_ps_analysis?.length || 0} events)` },
+    { id: 'actions',     label: `Action Plans (${data.action_plans?.length || 0})` },
+    { id: 'rca',         label: `RCA Elements (${data.rca_required_elements?.length || 0})` },
+  ];
+
+  return (
+    <div className="rounded-xl border border-slate-200 bg-white overflow-hidden">
+      {/* Header */}
+      <div className="flex items-center gap-2 px-6 py-3.5 border-b border-slate-100 bg-indigo-50">
+        <span className="text-indigo-500 text-sm">⚠</span>
+        <span className="text-xs font-medium text-indigo-700 uppercase tracking-widest">Fall Event Deep Analysis — FP-001</span>
+        <span className="ml-auto text-xs bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded font-medium">{data.fall_event_ids.length} fall{data.fall_event_ids.length !== 1 ? 's' : ''} detected</span>
+      </div>
+
+      {/* Pattern summary */}
+      {data.pattern_summary && (
+        <div className="px-6 py-4 border-b border-slate-100">
+          <p className="text-xs text-slate-500 leading-relaxed">{data.pattern_summary}</p>
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {data.fall_event_ids.map((id) => (
+              <span key={id} className="font-mono text-xs px-2 py-0.5 bg-slate-100 text-slate-500 rounded">{id}</span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 5-P failure heatmap */}
+      {Object.keys(psFailCounts).length > 0 && (
+        <div className="px-6 py-3 border-b border-slate-100 bg-slate-50">
+          <p className="text-xs text-slate-400 uppercase tracking-widest mb-2 font-medium">5-P Failure Summary</p>
+          <div className="flex gap-2 flex-wrap">
+            {Object.entries(psFailCounts).sort((a, b) => b[1] - a[1]).map(([k, n]) => (
+              <span key={k} className="text-xs px-2.5 py-1 bg-red-50 border border-red-200 text-red-700 rounded-lg font-medium">
+                {psLabels[k]} <span className="text-red-400">({n})</span>
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Tabs */}
+      <div className="flex border-b border-slate-100 overflow-x-auto">
+        {tabs.map((t) => (
+          <button
+            key={t.id}
+            onClick={() => setTab(t.id)}
+            className={`px-4 py-2.5 text-xs font-medium whitespace-nowrap transition-colors border-b-2 ${
+              tab === t.id ? 'border-indigo-500 text-indigo-700' : 'border-transparent text-slate-400 hover:text-slate-600'
+            }`}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Tab content */}
+      <div className="px-6 py-4">
+
+        {/* Overview */}
+        {tab === 'overview' && (
+          <div className="space-y-3">
+            {(data.five_ps_analysis || []).map((ev) => {
+              const failed = ['pain','personal_needs','position','placement','prevent_falls'].filter((k) => ev[k]?.status === 'failed');
+              return (
+                <div key={ev.event_id} className="border border-slate-100 rounded-xl p-4 bg-slate-50">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="font-mono text-xs text-slate-400">{ev.event_id}</span>
+                    {failed.length > 0 && (
+                      <span className="text-xs font-medium text-red-600">{failed.length} P{failed.length !== 1 ? 's' : ''} failed</span>
+                    )}
+                  </div>
+                  <div className="flex gap-1.5 flex-wrap">
+                    {['pain','personal_needs','position','placement','prevent_falls'].map((k) => (
+                      <span key={k} className={`text-xs px-2 py-0.5 rounded font-medium ${
+                        ev[k]?.status === 'failed'    ? 'bg-red-100 text-red-700 border border-red-200' :
+                        ev[k]?.status === 'compliant' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' :
+                        'bg-slate-100 text-slate-400 border border-slate-200'
+                      }`}>{psLabels[k]}</span>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Universal precautions */}
+        {tab === 'universal' && (
+          <div className="space-y-4">
+            {(data.universal_precautions_failures || []).length === 0
+              ? <p className="text-xs text-slate-400 text-center py-4">No universal precaution failures identified.</p>
+              : (data.universal_precautions_failures || []).map((f, i) => (
+                <div key={i} className="border border-red-100 rounded-xl overflow-hidden">
+                  <div className="bg-red-50 px-4 py-2.5 flex items-center gap-2">
+                    <span className="text-xs font-medium text-red-700 uppercase tracking-wide">Non-Compliance</span>
+                    <span className="font-mono text-xs text-slate-400 ml-auto">{f.event_id}</span>
+                  </div>
+                  <div className="px-4 py-3 space-y-2">
+                    <p className="text-xs font-medium text-slate-700">§5.1 — {f.precaution}</p>
+                    <p className="text-xs text-slate-500 leading-relaxed"><span className="font-medium text-slate-600">Evidence: </span>{f.evidence}</p>
+                    <div className="flex items-start gap-2 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">
+                      <span className="text-amber-500 text-xs mt-0.5 flex-shrink-0">💡</span>
+                      <p className="text-xs text-slate-700 leading-relaxed">{f.failure_mode}</p>
+                    </div>
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+        )}
+
+        {/* 5-P per event */}
+        {tab === 'five_ps' && (
+          <div className="space-y-6">
+            {(data.five_ps_analysis || []).map((ev) => (
+              <div key={ev.event_id}>
+                <p className="font-mono text-xs text-slate-400 mb-2">{ev.event_id}</p>
+                <FallPsCard psData={ev} />
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Action plans */}
+        {tab === 'actions' && (
+          <div className="space-y-3">
+            {(data.action_plans || []).map((a, i) => {
+              const priCls = { immediate: 'bg-red-600 text-white', short_term: 'bg-amber-500 text-white', ongoing: 'bg-slate-200 text-slate-600' };
+              const priLabel = { immediate: 'Immediate', short_term: 'Short Term', ongoing: 'Ongoing' };
+              return (
+                <div key={i} className="border border-slate-100 rounded-xl p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className={`text-xs font-medium px-2 py-0.5 rounded uppercase tracking-wide ${priCls[a.priority] || 'bg-slate-200 text-slate-600'}`}>
+                      {priLabel[a.priority] || a.priority}
+                    </span>
+                    {a.owner && <span className="text-xs text-slate-400">Owner: <span className="font-medium text-slate-600">{a.owner}</span></span>}
+                  </div>
+                  <p className="text-sm text-slate-700 leading-relaxed mb-1.5">{a.action}</p>
+                  {a.metric && (
+                    <p className="text-xs text-slate-400"><span className="font-medium text-slate-500">Metric:</span> {a.metric}</p>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* RCA elements */}
+        {tab === 'rca' && (
+          <div className="space-y-3">
+            <div className="bg-red-50 border border-red-100 rounded-xl px-4 py-3 mb-4">
+              <p className="text-xs font-medium text-red-700 mb-1">RCA Scope — Fall Events</p>
+              <p className="text-xs text-red-600 leading-relaxed">The following elements must be explicitly addressed in any Root Cause Analysis conducted for the fall events identified in this batch.</p>
+            </div>
+            {(data.rca_required_elements || []).map((el, i) => (
+              <div key={i} className="border border-slate-100 rounded-xl p-4">
+                <div className="flex gap-3">
+                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 text-xs font-semibold flex items-center justify-center">{i + 1}</span>
+                  <div>
+                    <p className="text-sm font-medium text-slate-800 mb-0.5">{el.element}</p>
+                    <p className="text-xs text-slate-500 leading-relaxed">{el.rationale}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+      </div>
+    </div>
+  );
+}
+
 // ── Left panel event list ─────────────────────────────────────────────────────
 function QueuePanel({ batch, triageResult, selectedId, onSelect, onShowBriefing }) {
   const qMap = triageResult
@@ -211,7 +441,11 @@ function WelcomePanel({ onRun, policyLoaded }) {
             ['Detects', 'Cross-event patterns and contributing factor clusters'],
             ['Flags', 'Regulatory obligations with citations and deadlines'],
             ['Builds', 'Case files with RCA guidance for the top 3 events'],
-            ...(policyLoaded ? [['Compares', 'Fall events against Policy FP-001 for compliance gaps']] : []),
+            ...(policyLoaded ? [
+      ['Compares', 'Fall events against Policy FP-001 for compliance gaps'],
+      ['Analyzes', '5-P rounding failures and universal precaution gaps per fall'],
+      ['Generates', 'Action plans and RCA required elements for fall pattern'],
+    ] : []),
           ].map(([lbl, txt], i) => (
             <div key={lbl} className={`px-5 py-3 flex gap-3 ${i > 0 ? 'border-t border-slate-100' : ''}`}>
               <span className="text-xs font-medium text-teal-600 w-20 flex-shrink-0">{lbl}</span>
@@ -238,7 +472,11 @@ function LoadingPanel({ count, policyLoaded }) {
     'Detecting cross-event patterns',
     'Assigning priority levels',
     'Checking regulatory obligations',
-    ...(policyLoaded ? ['Comparing against Fall Prevention Policy FP-001'] : []),
+    ...(policyLoaded ? [
+      'Comparing events against Fall Prevention Policy FP-001',
+      'Mapping 5-P rounding failures per fall event',
+      'Building action plans and RCA required elements',
+    ] : []),
     'Building case files',
   ];
   useEffect(() => {
@@ -306,6 +544,9 @@ function BriefingPanel({ result, onRun }) {
         {/* Policy gap */}
         <PolicyGapSection data={result.policy_alignment} />
 
+        {/* Fall deep analysis */}
+        <FallAnalysisSection data={result.fall_analysis} />
+
         {/* Regulatory flags */}
         {result.regulatory_flags?.length > 0 && (
           <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
@@ -338,7 +579,7 @@ function BriefingPanel({ result, onRun }) {
 }
 
 // ── Case file ─────────────────────────────────────────────────────────────────
-function CaseFilePanel({ event, triageResult, runId, policyAlignment }) {
+function CaseFilePanel({ event, triageResult, runId, policyAlignment, fallPsData }) {
   const [question, setQuestion] = useState('');
   const [answer, setAnswer]     = useState('');
   const [asking, setAsking]     = useState(false);
@@ -474,6 +715,9 @@ function CaseFilePanel({ event, triageResult, runId, policyAlignment }) {
           </div>
         )}
 
+        {/* 5-P per-event fall analysis */}
+        {fallPsData && <FallPsCard psData={fallPsData} />}
+
         {/* Policy gap — per event */}
         {policyAlignment && (
           <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
@@ -562,6 +806,7 @@ export default function VrmPage() {
 
   const selectedEvent    = selectedId ? batch.find((e) => e.id === selectedId) : null;
   const eventPolicyGap   = selectedEvent ? triageResult?.policy_alignment?.gaps?.find((g) => g.event_id === selectedEvent.id) : null;
+  const eventFallPs      = selectedEvent ? triageResult?.fall_analysis?.five_ps_analysis?.find((f) => f.event_id === selectedEvent.id) : null;
   const policyLoaded     = !!policyText;
   const immCount         = triageResult?.counts?.immediate ?? 0;
   const hiCount          = triageResult?.counts?.high ?? 0;
@@ -650,7 +895,7 @@ export default function VrmPage() {
           {mode === 'pre-run'  && <WelcomePanel onRun={runAgent} policyLoaded={policyLoaded} />}
           {mode === 'running'  && <LoadingPanel count={batch.length} policyLoaded={policyLoaded} />}
           {mode === 'briefing' && !selectedEvent && <BriefingPanel result={triageResult} onRun={runAgent} />}
-          {mode === 'briefing' && selectedEvent  && <CaseFilePanel event={selectedEvent} triageResult={triageResult} runId={runId} policyAlignment={eventPolicyGap} />}
+          {mode === 'briefing' && selectedEvent  && <CaseFilePanel event={selectedEvent} triageResult={triageResult} runId={runId} policyAlignment={eventPolicyGap} fallPsData={eventFallPs} />}
         </div>
 
       </div>

@@ -13,7 +13,7 @@ const SEV = {
   severe:   'bg-red-50 text-red-700 ring-1 ring-red-200',
   moderate: 'bg-orange-50 text-orange-700 ring-1 ring-orange-200',
   mild:     'bg-amber-50 text-amber-700 ring-1 ring-amber-200',
-  no_harm:  'bg-sky-50 text-sky-600 ring-1 ring-sky-200',
+  no_harm:  'bg-[#EEF2F8] text-[#4A6080] ring-1 ring-[#CBD5E8]',
   death:    'bg-slate-900 text-white',
 };
 
@@ -100,7 +100,7 @@ function PolicyGapSection({ data }) {
               : <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-200 uppercase tracking-wide mb-2">⚠ Missing Policy</span>
             }
             {g.policy_section && (
-              <p className="text-xs text-teal-600 mb-1.5"><FileIcon cls="w-3 h-3 inline mr-1" />{g.policy_section}</p>
+              <p className="text-xs text-[#0288D1] mb-1.5"><FileIcon cls="w-3 h-3 inline mr-1" />{g.policy_section}</p>
             )}
             <p className="text-xs text-slate-600 leading-relaxed mb-2">{g.gap}</p>
             <div className="flex items-start gap-2 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">
@@ -181,10 +181,10 @@ function FallAnalysisSection({ data }) {
   return (
     <div className="rounded-xl border border-slate-200 bg-white overflow-hidden">
       {/* Header */}
-      <div className="flex items-center gap-2 px-6 py-3.5 border-b border-slate-100 bg-indigo-50">
-        <span className="text-indigo-500 text-sm">⚠</span>
-        <span className="text-xs font-medium text-indigo-700 uppercase tracking-widest">Fall Event Deep Analysis — FP-001</span>
-        <span className="ml-auto text-xs bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded font-medium">{data.fall_event_ids.length} fall{data.fall_event_ids.length !== 1 ? 's' : ''} detected</span>
+      <div className="flex items-center gap-2 px-6 py-3.5 border-b border-slate-100 bg-[#E3EEFF]">
+        <span className="text-[#1E5FAD] text-sm">⚠</span>
+        <span className="text-xs font-medium text-[#1B3A6B] uppercase tracking-widest">Fall Event Deep Analysis — FP-001</span>
+        <span className="ml-auto text-xs bg-[#DBEAFE] text-[#1E5FAD] px-2 py-0.5 rounded font-medium">{data.fall_event_ids.length} fall{data.fall_event_ids.length !== 1 ? 's' : ''} detected</span>
       </div>
 
       {/* Pattern summary */}
@@ -220,7 +220,7 @@ function FallAnalysisSection({ data }) {
             key={t.id}
             onClick={() => setTab(t.id)}
             className={`px-4 py-2.5 text-xs font-medium whitespace-nowrap transition-colors border-b-2 ${
-              tab === t.id ? 'border-indigo-500 text-indigo-700' : 'border-transparent text-slate-400 hover:text-slate-600'
+              tab === t.id ? 'border-[#1E5FAD] text-[#1B3A6B]' : 'border-transparent text-slate-400 hover:text-slate-600'
             }`}
           >
             {t.label}
@@ -330,7 +330,7 @@ function FallAnalysisSection({ data }) {
             {(data.rca_required_elements || []).map((el, i) => (
               <div key={i} className="border border-slate-100 rounded-xl p-4">
                 <div className="flex gap-3">
-                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 text-xs font-semibold flex items-center justify-center">{i + 1}</span>
+                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[#DBEAFE] text-[#1B3A6B] text-xs font-semibold flex items-center justify-center">{i + 1}</span>
                   <div>
                     <p className="text-sm font-medium text-slate-800 mb-0.5">{el.element}</p>
                     <p className="text-xs text-slate-500 leading-relaxed">{el.rationale}</p>
@@ -399,7 +399,7 @@ function EventRow({ ev, selected, onSelect, snippet: snip }) {
     <button
       onClick={() => onSelect(ev.id)}
       className={`w-full text-left px-3 py-2.5 border-l-2 transition-colors ${
-        selected ? 'bg-teal-50 border-l-teal-500' : ev.sentinel ? 'border-l-red-400 hover:bg-slate-50' : 'border-l-transparent hover:bg-slate-50'
+        selected ? 'bg-[#E3EEFF] border-l-[#1E5FAD]' : ev.sentinel ? 'border-l-red-400 hover:bg-slate-50' : 'border-l-transparent hover:bg-slate-50'
       }`}
     >
       <div className="flex items-center justify-between gap-1 mb-0.5">
@@ -420,7 +420,7 @@ function WelcomePanel({ onRun, policyLoaded }) {
   return (
     <div className="flex-1 flex items-center justify-center bg-white p-12">
       <div className="max-w-lg w-full">
-        <div className="w-12 h-12 rounded-xl bg-teal-600 flex items-center justify-center mb-6">
+        <div className="w-12 h-12 rounded-xl bg-[#1E5FAD] flex items-center justify-center mb-6">
           <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
               d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -431,9 +431,9 @@ function WelcomePanel({ onRun, policyLoaded }) {
           AI-powered triage across your highest-priority safety events — prioritized queue, pattern detection, regulatory flags, and RCA case files in under 90 seconds.
         </p>
         {policyLoaded && (
-          <div className="flex items-center gap-2 bg-blue-50 border border-blue-100 rounded-lg px-4 py-2.5 mb-6">
-            <FileIcon cls="w-3.5 h-3.5 text-blue-500 flex-shrink-0" />
-            <p className="text-xs text-blue-700"><span className="font-medium">Fall Prevention Policy FP-001</span> loaded — policy alignment included in analysis</p>
+          <div className="flex items-center gap-2 bg-[#E3EEFF] border border-[#CBD5E8] rounded-lg px-4 py-2.5 mb-6">
+            <FileIcon cls="w-3.5 h-3.5 text-[#1E5FAD] flex-shrink-0" />
+            <p className="text-xs text-[#1B3A6B]"><span className="font-medium">Fall Prevention Policy FP-001</span> loaded — policy alignment included in analysis</p>
           </div>
         )}
         <div className="border border-slate-100 rounded-xl overflow-hidden mb-6 bg-slate-50">
@@ -450,12 +450,12 @@ function WelcomePanel({ onRun, policyLoaded }) {
     ] : []),
           ].map(([lbl, txt], i) => (
             <div key={lbl} className={`px-5 py-3 flex gap-3 ${i > 0 ? 'border-t border-slate-100' : ''}`}>
-              <span className="text-xs font-medium text-teal-600 w-20 flex-shrink-0">{lbl}</span>
+              <span className="text-xs font-medium text-[#0288D1] w-20 flex-shrink-0">{lbl}</span>
               <span className="text-xs text-slate-500">{txt}</span>
             </div>
           ))}
         </div>
-        <button onClick={onRun} className="w-full bg-teal-600 hover:bg-teal-700 text-white font-medium py-3 rounded-xl transition-colors text-sm">
+        <button onClick={onRun} className="w-full bg-[#1E5FAD] hover:bg-[#1565C0] text-white font-medium py-3 rounded-xl transition-colors text-sm">
           Run Triage Agent
         </button>
         <p className="mt-3 text-center text-xs text-slate-400">Powered by Claude · AI-generated · review before acting</p>
@@ -488,15 +488,15 @@ function LoadingPanel({ count, policyLoaded }) {
   return (
     <div className="flex-1 flex items-center justify-center bg-white p-12">
       <div className="max-w-xs w-full text-center">
-        <div className="w-10 h-10 rounded-full border-4 border-teal-100 border-t-teal-600 animate-spin mx-auto mb-6" />
+        <div className="w-10 h-10 rounded-full border-4 border-[#CBD5E8] border-t-[#1E5FAD] animate-spin mx-auto mb-6" />
         <p className="text-sm font-medium text-slate-800 mb-1">{count ? `Analyzing ${count} events` : 'Loading events…'}</p>
         <p className="text-xs text-slate-400 mb-8">Usually 60–90 seconds</p>
         <div className="space-y-3 text-left">
           {steps.map((s, i) => (
-            <div key={i} className={`flex items-center gap-3 text-xs ${i < step ? 'text-teal-600' : i === step ? 'text-slate-700' : 'text-slate-300'}`}>
-              <div className={`w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center border-2 ${i < step ? 'bg-teal-600 border-teal-600' : i === step ? 'border-teal-500' : 'border-slate-200'}`}>
+            <div key={i} className={`flex items-center gap-3 text-xs ${i < step ? 'text-[#0288D1]' : i === step ? 'text-slate-700' : 'text-slate-300'}`}>
+              <div className={`w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center border-2 ${i < step ? 'bg-[#1E5FAD] border-[#1E5FAD]' : i === step ? 'border-[#1E5FAD]' : 'border-slate-200'}`}>
                 {i < step && <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 12 12" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2 6l3 3 5-5" /></svg>}
-                {i === step && <div className="w-2 h-2 rounded-full bg-teal-500 animate-pulse" />}
+                {i === step && <div className="w-2 h-2 rounded-full bg-[#E3EEFF]0 animate-pulse" />}
               </div>
               <span className={i === step ? 'font-medium' : ''}>{s}</span>
             </div>
@@ -520,7 +520,7 @@ function BriefingPanel({ result, onRun }) {
               <span className="text-amber-400">◆</span>
               <span className="text-xs font-medium text-slate-400 uppercase tracking-widest">Agent Briefing</span>
             </div>
-            <button onClick={onRun} className="text-xs text-teal-600 hover:text-teal-700 font-medium flex items-center gap-1">
+            <button onClick={onRun} className="text-xs text-[#0288D1] hover:text-[#1E5FAD] font-medium flex items-center gap-1">
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
               Re-run
             </button>
@@ -568,9 +568,9 @@ function BriefingPanel({ result, onRun }) {
         )}
 
         {/* Hint */}
-        <div className="bg-teal-50 border border-teal-100 rounded-xl px-6 py-4">
-          <p className="text-xs font-medium text-teal-700 mb-1">Select any event in the queue for the full case file</p>
-          <p className="text-xs text-teal-600 leading-relaxed">
+        <div className="bg-[#E3EEFF] border border-[#CBD5E8] rounded-xl px-6 py-4">
+          <p className="text-xs font-medium text-[#1E5FAD] mb-1">Select any event in the queue for the full case file</p>
+          <p className="text-xs text-[#0288D1] leading-relaxed">
             Pre-built investigation files for the top 3 critical events — narrative analysis, interview guides, RCA recommendations. All events support <span className="font-medium">Ask the Agent</span>.
           </p>
         </div>
@@ -644,21 +644,21 @@ function CaseFilePanel({ event, triageResult, runId, policyAlignment, fallPsData
         {caseFile ? (
           <>
             {/* Agent analysis */}
-            <div className="bg-teal-50 rounded-xl border border-teal-200 px-6 py-5">
+            <div className="bg-[#E3EEFF] rounded-xl border border-[#CBD5E8] px-6 py-5">
               <div className="flex items-center gap-2 mb-3">
-                <div className="w-5 h-5 rounded bg-teal-600 flex items-center justify-center flex-shrink-0">
+                <div className="w-5 h-5 rounded bg-[#1E5FAD] flex items-center justify-center flex-shrink-0">
                   <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                   </svg>
                 </div>
-                <span className="text-xs font-medium text-teal-800 uppercase tracking-wide">Agent Analysis</span>
-                <span className="text-xs text-teal-400 ml-auto">AI-generated · review before acting</span>
+                <span className="text-xs font-medium text-[#1B3A6B] uppercase tracking-wide">Agent Analysis</span>
+                <span className="text-xs text-[#7A92B0] ml-auto">AI-generated · review before acting</span>
               </div>
               <p className="text-sm text-slate-700 leading-relaxed mb-3">{caseFile.narrative_analysis}</p>
               {caseFile.contributing_factors_extracted?.length > 0 && (
                 <div className="flex flex-wrap gap-1.5">
                   {caseFile.contributing_factors_extracted.map((f) => (
-                    <span key={f} className="text-xs px-2 py-0.5 bg-teal-100 border border-teal-200 text-teal-800 rounded-lg">{f}</span>
+                    <span key={f} className="text-xs px-2 py-0.5 bg-[#DBEAFE] border border-[#CBD5E8] text-[#1B3A6B] rounded-lg">{f}</span>
                   ))}
                 </div>
               )}
@@ -671,7 +671,7 @@ function CaseFilePanel({ event, triageResult, runId, policyAlignment, fallPsData
                 <ol className="space-y-3">
                   {caseFile.recommended_actions.map((a, i) => (
                     <li key={i} className="flex gap-3">
-                      <span className="flex-shrink-0 w-5 h-5 rounded-full bg-teal-600 text-white text-xs font-medium flex items-center justify-center mt-0.5">{i + 1}</span>
+                      <span className="flex-shrink-0 w-5 h-5 rounded-full bg-[#1E5FAD] text-white text-xs font-medium flex items-center justify-center mt-0.5">{i + 1}</span>
                       <p className="text-sm text-slate-700 leading-relaxed">{a}</p>
                     </li>
                   ))}
@@ -733,7 +733,7 @@ function CaseFilePanel({ event, triageResult, runId, policyAlignment, fallPsData
                 : <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-200 uppercase tracking-wide mb-3">⚠ Missing Policy</span>
               }
               {policyAlignment.policy_section && (
-                <p className="text-xs text-teal-600 mb-2"><FileIcon cls="w-3 h-3 inline mr-1" />{policyAlignment.policy_section}</p>
+                <p className="text-xs text-[#0288D1] mb-2"><FileIcon cls="w-3 h-3 inline mr-1" />{policyAlignment.policy_section}</p>
               )}
               <p className="text-xs text-slate-600 leading-relaxed mb-3">{policyAlignment.gap}</p>
               <div className="flex items-start gap-2 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">
@@ -753,18 +753,18 @@ function CaseFilePanel({ event, triageResult, runId, policyAlignment, fallPsData
               onChange={(e) => setQuestion(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && ask()}
               placeholder="e.g. What FMEA categories apply here?"
-              className="flex-1 text-sm border border-slate-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent placeholder-slate-300 bg-slate-50"
+              className="flex-1 text-sm border border-slate-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#1E5FAD] focus:border-transparent placeholder-slate-300 bg-slate-50"
             />
             <button
               onClick={ask} disabled={asking || !question.trim()}
-              className="bg-teal-600 hover:bg-teal-700 disabled:bg-slate-100 disabled:text-slate-400 text-white text-sm font-medium px-5 py-2.5 rounded-xl transition-colors flex items-center gap-1.5"
+              className="bg-[#1E5FAD] hover:bg-[#1565C0] disabled:bg-slate-100 disabled:text-slate-400 text-white text-sm font-medium px-5 py-2.5 rounded-xl transition-colors flex items-center gap-1.5"
             >
               {asking ? <Spin /> : 'Ask'}
             </button>
           </div>
           {answer && (
             <div className="mt-4 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3">
-              <p className="text-xs font-medium text-teal-600 uppercase tracking-wide mb-2">Agent Response</p>
+              <p className="text-xs font-medium text-[#0288D1] uppercase tracking-wide mb-2">Agent Response</p>
               <p className="text-sm text-slate-700 leading-relaxed">{answer}</p>
             </div>
           )}
@@ -830,7 +830,7 @@ export default function VrmPage() {
           {policyLoaded && (
             <button onClick={() => setShowPolicy(true)}
               className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-800 border border-slate-200 hover:bg-slate-50 px-3 py-1.5 rounded-lg transition-colors">
-              <FileIcon cls="w-3.5 h-3.5 text-blue-500" />
+              <FileIcon cls="w-3.5 h-3.5 text-[#1E5FAD]" />
               Fall Prevention Policy
             </button>
           )}
@@ -840,7 +840,7 @@ export default function VrmPage() {
           </div>
           {mode === 'running' ? (
             <div className="flex items-center gap-2 bg-slate-100 px-4 py-2 rounded-lg text-slate-500 text-xs">
-              <Spin cls="h-3.5 w-3.5 text-teal-600" /> Analyzing…
+              <Spin cls="h-3.5 w-3.5 text-[#0288D1]" /> Analyzing…
             </div>
           ) : (
             <button onClick={runAgent}
@@ -879,10 +879,10 @@ export default function VrmPage() {
           )}
           {policyLoaded && gapCount > 0 && (
             <button onClick={() => setSelectedId(null)}
-              className="px-3 py-2 border-b border-blue-100 bg-blue-50 flex-shrink-0 flex items-center gap-1.5 w-full hover:bg-blue-100 transition-colors">
-              <FileIcon cls="w-3 h-3 text-blue-500 flex-shrink-0" />
-              <p className="text-xs text-blue-700 font-medium">{gapCount} policy gap{gapCount !== 1 ? 's' : ''} — FP-001</p>
-              <span className="ml-auto text-blue-400 text-xs">→</span>
+              className="px-3 py-2 border-b border-[#CBD5E8] bg-[#E3EEFF] flex-shrink-0 flex items-center gap-1.5 w-full hover:bg-[#DBEAFE] transition-colors">
+              <FileIcon cls="w-3 h-3 text-[#1E5FAD] flex-shrink-0" />
+              <p className="text-xs text-[#1B3A6B] font-medium">{gapCount} policy gap{gapCount !== 1 ? 's' : ''} — FP-001</p>
+              <span className="ml-auto text-[#7A92B0] text-xs">→</span>
             </button>
           )}
           <QueuePanel

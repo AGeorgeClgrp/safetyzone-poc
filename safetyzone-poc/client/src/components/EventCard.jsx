@@ -12,112 +12,109 @@ function timeAgo(isoStr) {
 }
 
 const SEVERITY_STYLES = {
-  serious: 'bg-red-100 text-red-700 border border-red-200',
-  moderate: 'bg-orange-100 text-orange-700 border border-orange-200',
-  minor: 'bg-yellow-100 text-yellow-700 border border-yellow-200',
-  near_miss: 'bg-blue-100 text-blue-700 border border-blue-200',
-};
-
-const SEVERITY_LABELS = {
-  serious: 'Serious',
-  moderate: 'Moderate',
-  minor: 'Minor',
-  near_miss: 'Near Miss',
+  serious:   { bg: '#1B3A6B', txt: '#BAD4FF', bdr: '#1E5FAD' },
+  moderate:  { bg: '#1E5FAD', txt: '#FFFFFF',  bdr: '#1565C0' },
+  minor:     { bg: '#E3EEFF', txt: '#1B3A6B',  bdr: '#CBD5E8' },
+  near_miss: { bg: '#EEF2F8', txt: '#4A6080',  bdr: '#CBD5E8' },
 };
 
 const STATUS_STYLES = {
-  queued: 'bg-slate-200 text-slate-700',
-  in_review: 'bg-indigo-100 text-indigo-700',
-  classified: 'bg-purple-100 text-purple-700',
-  closed: 'bg-green-100 text-green-700',
-  monitoring: 'bg-cyan-100 text-cyan-700',
-  escalated: 'bg-red-100 text-red-700',
-  under_investigation: 'bg-amber-100 text-amber-700',
-};
-
-const STATUS_LABELS = {
-  queued: 'Queued',
-  in_review: 'In Review',
-  classified: 'Classified',
-  closed: 'Closed',
-  monitoring: 'Monitoring',
-  escalated: 'Escalated',
-  under_investigation: 'Under Investigation',
+  queued:              { bg: '#EEF2F8', txt: '#4A6080' },
+  in_review:           { bg: '#DBEAFE', txt: '#1E5FAD' },
+  classified:          { bg: '#E3EEFF', txt: '#1B3A6B' },
+  closed:              { bg: '#DCFCE7', txt: '#15803D' },
+  monitoring:          { bg: '#E3EEFF', txt: '#0288D1' },
+  escalated:           { bg: '#FEE2E2', txt: '#991B1B' },
+  under_investigation: { bg: '#DBEAFE', txt: '#0277BD' },
 };
 
 const SOURCE_STYLES = {
-  'IHI GTT': 'bg-indigo-50 text-indigo-600',
-  'CMS HAC': 'bg-teal-50 text-teal-600',
-  'NQF SRE': 'bg-violet-50 text-violet-600',
-  'Joint Commission': 'bg-amber-50 text-amber-600',
-  'TJC Sentinel': 'bg-red-50 text-red-600',
+  'IHI GTT':          { bg: '#E3EEFF', txt: '#1B3A6B' },
+  'CMS HAC':          { bg: '#E3EEFF', txt: '#0288D1' },
+  'NQF SRE':          { bg: '#E3EEFF', txt: '#1565C0' },
+  'Joint Commission': { bg: '#DBEAFE', txt: '#0277BD' },
+  'TJC Sentinel':     { bg: '#FEE2E2', txt: '#991B1B' },
+};
+
+const SEVERITY_LABELS = {
+  serious: 'Serious', moderate: 'Moderate', minor: 'Minor', near_miss: 'Near Miss',
+};
+const STATUS_LABELS = {
+  queued: 'Queued', in_review: 'In Review', classified: 'Classified',
+  closed: 'Closed', monitoring: 'Monitoring', escalated: 'Escalated',
+  under_investigation: 'Under Investigation',
 };
 
 export default function EventCard({ event, selected = false, onToggle }) {
   const navigate = useNavigate();
-
-  const severityClass = SEVERITY_STYLES[event.severity] || 'bg-slate-100 text-slate-600';
-  const severityLabel = SEVERITY_LABELS[event.severity] || event.severity;
-  const statusClass = STATUS_STYLES[event.status] || 'bg-slate-100 text-slate-600';
-  const statusLabel = STATUS_LABELS[event.status] || event.status;
   const sourceLabel = event.triggerSource || event.sourceSystem;
-  const sourceClass = SOURCE_STYLES[sourceLabel] || 'bg-slate-50 text-slate-600';
+  const sevSty = SEVERITY_STYLES[event.severity] || { bg: '#EEF2F8', txt: '#4A6080', bdr: '#CBD5E8' };
+  const stsSty = STATUS_STYLES[event.status]    || { bg: '#EEF2F8', txt: '#4A6080' };
+  const srcSty = SOURCE_STYLES[sourceLabel]     || { bg: '#EEF2F8', txt: '#4A6080' };
 
   return (
     <div
       onClick={() => navigate(`/events/${event.id}`)}
-      className={`bg-white rounded-lg shadow-sm border p-4 cursor-pointer hover:shadow-md transition-all ${
-        selected ? 'border-indigo-400 bg-indigo-50' : 'border-slate-200 hover:border-indigo-300'
-      }`}
+      onMouseEnter={(e) => { if (!selected) e.currentTarget.style.borderColor = '#1E5FAD'; }}
+      onMouseLeave={(e) => { if (!selected) e.currentTarget.style.borderColor = '#CBD5E8'; }}
+      style={{
+        background: selected ? '#EEF2F8' : '#FFFFFF',
+        border: `1px solid ${selected ? '#1E5FAD' : '#CBD5E8'}`,
+        borderRadius: 10,
+        padding: 16,
+        cursor: 'pointer',
+        boxShadow: '0 1px 3px rgba(10,22,40,0.06)',
+        transition: 'box-shadow 0.15s, border-color 0.15s',
+      }}
     >
-      <div className="flex items-start gap-4">
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
         {onToggle && (
           <input
             type="checkbox"
             checked={selected}
             onClick={(e) => { e.stopPropagation(); onToggle(event.id); }}
             onChange={() => {}}
-            className="mt-0.5 flex-shrink-0 accent-indigo-600"
+            style={{ marginTop: 2, flexShrink: 0 }}
           />
         )}
-        <div className="flex-shrink-0">
+        <div style={{ flexShrink: 0 }}>
           <PriorityBadge score={event.priorityScore} />
         </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap mb-1">
-            <h3 className="text-sm font-semibold text-slate-900 truncate">{event.type}</h3>
-            <span className={`px-2 py-0.5 rounded text-xs font-medium ${sourceClass}`}>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 4 }}>
+            <h3 style={{ fontSize: 13, fontWeight: 600, color: '#0A1628', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {event.type}
+            </h3>
+            <span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 11, fontWeight: 500, background: srcSty.bg, color: srcSty.txt }}>
               {sourceLabel}
             </span>
             {event.sentinel && (
-              <span className="px-2 py-0.5 rounded text-xs font-bold bg-red-600 text-white">SENTINEL</span>
+              <span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 11, fontWeight: 700, background: '#991B1B', color: '#FFFFFF' }}>
+                SENTINEL
+              </span>
             )}
           </div>
-          <p className="text-xs text-slate-500 mb-2">
-            MRN: <span className="font-mono">{event.patient.mrn}</span>
-            {event.patient.facility && (
-              <span className="ml-2 text-slate-400">· {event.patient.facility}</span>
-            )}
-            {event.encounter && (
-              <span className="ml-2 text-slate-400">· {event.encounter.unit}</span>
-            )}
+          <p style={{ fontSize: 11, color: '#7A92B0', marginBottom: 8 }}>
+            MRN: <span style={{ fontFamily: 'monospace' }}>{event.patient.mrn}</span>
+            {event.patient.facility && <span style={{ marginLeft: 8 }}>· {event.patient.facility}</span>}
+            {event.encounter && <span style={{ marginLeft: 8 }}>· {event.encounter.unit}</span>}
           </p>
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${severityClass}`}>
-              {severityLabel}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+            <span style={{ padding: '2px 8px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: sevSty.bg, color: sevSty.txt, border: `1px solid ${sevSty.bdr}` }}>
+              {SEVERITY_LABELS[event.severity] || event.severity}
             </span>
-            <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${statusClass}`}>
-              {statusLabel}
+            <span style={{ padding: '2px 8px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: stsSty.bg, color: stsSty.txt }}>
+              {STATUS_LABELS[event.status] || event.status}
             </span>
             {event.harmLevel && (
-              <span className="px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-600">
+              <span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 11, fontWeight: 500, background: '#EEF2F8', color: '#4A6080' }}>
                 Harm {event.harmLevel}
               </span>
             )}
           </div>
         </div>
-        <div className="flex-shrink-0 text-right">
-          <span className="text-xs text-slate-400">{timeAgo(event.occurredAt)}</span>
+        <div style={{ flexShrink: 0, textAlign: 'right' }}>
+          <span style={{ fontSize: 11, color: '#7A92B0' }}>{timeAgo(event.occurredAt)}</span>
         </div>
       </div>
     </div>

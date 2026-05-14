@@ -1,46 +1,72 @@
 import React, { useEffect, useState } from 'react';
 import apiClient from '../api/client';
 
-const ACTION_LABELS = {
-  event_opened: 'Opened Event',
-  event_classified: 'Classified Event',
-  disposition_set: 'Set Disposition',
-  event_escalated: 'Escalated Event',
-  escalation_acknowledged: 'Acknowledged Escalation',
-  session_start: 'Session Started',
-  session_end: 'Session Ended',
+const C = {
+  pageBg:      '#F0F4F8',
+  cardBg:      '#FFFFFF',
+  cardBorder:  '#CBD5E8',
+  theadBg:     '#EEF2F8',
+  theadTxt:    '#7A92B0',
+  rowAlt:      '#F7F9FC',
+  rowEven:     '#FFFFFF',
+  rowBorder:   '#EEF2F8',
+  cellMeta:    '#7A92B0',
+  cellPrimary: '#0A1628',
+  cellBody:    '#4A6080',
+  cellMono:    '#4A6080',
+  pageTitle:   '#0A1628',
+  pageSub:     '#4A6080',
+  filterLabel: '#4A6080',
+  filterBdr:   '#CBD5E8',
+  filterFocus: '#1E5FAD',
+  countTxt:    '#7A92B0',
+  emptyTxt:    '#7A92B0',
+  spinRing:    '#E3EEFF',
+  spinHead:    '#1E5FAD',
+  errorBg:     '#FFF0F0',
+  errorBdr:    '#FECACA',
+  errorTxt:    '#991B1B',
 };
 
-const ACTION_COLORS = {
-  event_opened: 'bg-slate-100 text-slate-700',
-  event_classified: 'bg-purple-100 text-purple-700',
-  disposition_set: 'bg-blue-100 text-blue-700',
-  event_escalated: 'bg-red-100 text-red-700',
-  escalation_acknowledged: 'bg-green-100 text-green-700',
-  session_start: 'bg-indigo-100 text-indigo-700',
-  session_end: 'bg-indigo-100 text-indigo-700',
+// All action badge colors → blue palette
+const ACTION_STYLES = {
+  event_opened:             { bg: '#EEF2F8', txt: '#4A6080' },
+  event_classified:         { bg: '#E3EEFF', txt: '#1B3A6B' },
+  disposition_set:          { bg: '#DBEAFE', txt: '#1E5FAD' },
+  event_escalated:          { bg: '#1B3A6B', txt: '#BAD4FF' },
+  escalation_acknowledged:  { bg: '#E3EEFF', txt: '#283593' },
+  session_start:            { bg: '#EEF2F8', txt: '#01579B' },
+  session_end:              { bg: '#EEF2F8', txt: '#01579B' },
+  vrm_triage_run:           { bg: '#E3EEFF', txt: '#1E5FAD' },
+  vrm_ask:                  { bg: '#DBEAFE', txt: '#0277BD' },
+};
+
+const ACTION_LABELS = {
+  event_opened:             'Opened Event',
+  event_classified:         'Classified Event',
+  disposition_set:          'Set Disposition',
+  event_escalated:          'Escalated Event',
+  escalation_acknowledged:  'Acknowledged Escalation',
+  session_start:            'Session Started',
+  session_end:              'Session Ended',
+  vrm_triage_run:           'VRM Triage Run',
+  vrm_ask:                  'VRM Ask',
 };
 
 function formatDate(iso) {
   return new Date(iso).toLocaleString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
+    month: 'short', day: 'numeric', year: 'numeric',
+    hour: '2-digit', minute: '2-digit', second: '2-digit',
   });
 }
 
 export default function AuditLogPage() {
-  const [log, setLog] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [log, setLog]               = useState([]);
+  const [loading, setLoading]       = useState(true);
+  const [error, setError]           = useState(null);
   const [actionFilter, setActionFilter] = useState('all');
 
-  useEffect(() => {
-    loadAudit();
-  }, []);
+  useEffect(() => { loadAudit(); }, []);
 
   async function loadAudit() {
     try {
@@ -54,116 +80,118 @@ export default function AuditLogPage() {
   }
 
   const allActions = ['all', ...Object.keys(ACTION_LABELS)];
-
-  const filtered =
-    actionFilter === 'all' ? log : log.filter((e) => e.action === actionFilter);
+  const filtered = actionFilter === 'all' ? log : log.filter((e) => e.action === actionFilter);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6">
-      <div className="mb-6">
-        <h1 className="text-xl font-bold text-slate-900">Audit Log</h1>
-        <p className="text-sm text-slate-500 mt-0.5">
-          Complete record of all actions taken in this session
-        </p>
-      </div>
+    <div style={{ flex: 1, overflowY: 'auto', background: C.pageBg, padding: '24px 24px' }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto' }}>
 
-      {/* Filters */}
-      <div className="flex items-center gap-3 mb-4">
-        <label className="text-sm font-medium text-slate-700">Filter by action:</label>
-        <select
-          value={actionFilter}
-          onChange={(e) => setActionFilter(e.target.value)}
-          className="border border-slate-300 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        >
-          {allActions.map((action) => (
-            <option key={action} value={action}>
-              {action === 'all' ? 'All Actions' : ACTION_LABELS[action] || action}
-            </option>
-          ))}
-        </select>
-        <span className="text-sm text-slate-500">{filtered.length} entries</span>
-      </div>
+        {/* Page header */}
+        <div style={{ marginBottom: 20 }}>
+          <h1 style={{ fontSize: 18, fontWeight: 700, color: C.pageTitle, margin: '0 0 4px' }}>Audit Log</h1>
+          <p style={{ fontSize: 12, color: C.pageSub, margin: 0 }}>
+            Complete record of all actions taken in this session
+          </p>
+        </div>
 
-      {loading ? (
-        <div className="flex items-center justify-center py-16">
-          <div className="text-slate-400 text-sm">Loading audit log...</div>
+        {/* Filter row */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+          <label style={{ fontSize: 12, fontWeight: 500, color: C.filterLabel }}>Filter by action:</label>
+          <select
+            value={actionFilter}
+            onChange={(e) => setActionFilter(e.target.value)}
+            style={{
+              border: `1px solid ${C.filterBdr}`, borderRadius: 7,
+              padding: '5px 10px', fontSize: 12, color: C.cellBody,
+              background: C.cardBg, outline: 'none', cursor: 'pointer',
+            }}
+          >
+            {allActions.map((action) => (
+              <option key={action} value={action}>
+                {action === 'all' ? 'All Actions' : ACTION_LABELS[action] || action}
+              </option>
+            ))}
+          </select>
+          <span style={{ fontSize: 12, color: C.countTxt }}>{filtered.length} entries</span>
         </div>
-      ) : error ? (
-        <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
-          {error}
-        </div>
-      ) : filtered.length === 0 ? (
-        <div className="flex items-center justify-center py-16">
-          <div className="text-center">
-            <div className="text-3xl mb-2">📋</div>
-            <p className="text-slate-500 text-sm">No audit entries yet. Start reviewing events.</p>
+
+        {/* States */}
+        {loading ? (
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '60px 0' }}>
+            <div style={{ width: 36, height: 36, border: `4px solid ${C.spinRing}`,
+              borderTopColor: C.spinHead, borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
           </div>
-        </div>
-      ) : (
-        <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wide">
-                    Timestamp
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wide">
-                    User
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wide">
-                    Action
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wide">
-                    Resource
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wide">
-                    Detail
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((entry, idx) => {
-                  const actionLabel = ACTION_LABELS[entry.action] || entry.action;
-                  const actionColor = ACTION_COLORS[entry.action] || 'bg-slate-100 text-slate-600';
-                  return (
-                    <tr
-                      key={entry.id || idx}
-                      className={`border-b border-slate-100 ${idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'}`}
-                    >
-                      <td className="px-4 py-3 text-xs text-slate-500 whitespace-nowrap">
-                        {formatDate(entry.timestamp)}
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="font-medium text-slate-900 text-xs">{entry.userName}</div>
-                        <div className="text-slate-400 text-xs">{entry.userRole}</div>
-                      </td>
-                      <td className="px-4 py-3">
-                        <span
-                          className={`px-2 py-0.5 rounded text-xs font-medium ${actionColor}`}
-                        >
-                          {actionLabel}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 text-xs text-slate-500">
-                        {entry.resourceType}
-                        {entry.resourceRef && (
-                          <div className="font-mono text-xs text-slate-400 truncate max-w-xs">
-                            {entry.resourceRef.slice(0, 8)}…
-                          </div>
-                        )}
-                      </td>
-                      <td className="px-4 py-3 text-xs text-slate-600 max-w-sm">
-                        {entry.detail || '—'}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+        ) : error ? (
+          <div style={{ padding: '12px 16px', background: C.errorBg, border: `1px solid ${C.errorBdr}`,
+            borderRadius: 8, fontSize: 12, color: C.errorTxt }}>
+            {error}
           </div>
-        </div>
-      )}
+        ) : filtered.length === 0 ? (
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '60px 0' }}>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: 28, marginBottom: 8 }}>📋</div>
+              <p style={{ fontSize: 12, color: C.emptyTxt, margin: 0 }}>No audit entries yet. Start reviewing events.</p>
+            </div>
+          </div>
+        ) : (
+          <div style={{ background: C.cardBg, border: `1px solid ${C.cardBorder}`,
+            borderRadius: 12, overflow: 'hidden' }}>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+                <thead>
+                  <tr style={{ background: C.theadBg }}>
+                    {['Timestamp','User','Action','Resource','Detail'].map((h) => (
+                      <th key={h} style={{ padding: '10px 16px', textAlign: 'left',
+                        fontSize: 10, fontWeight: 600, color: C.theadTxt,
+                        textTransform: 'uppercase', letterSpacing: '0.05em',
+                        borderBottom: `1px solid ${C.cardBorder}` }}>
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {filtered.map((entry, idx) => {
+                    const actionLabel = ACTION_LABELS[entry.action] || entry.action;
+                    const sty = ACTION_STYLES[entry.action] || { bg: C.theadBg, txt: C.cellBody };
+                    return (
+                      <tr key={entry.id || idx}
+                        style={{ background: idx % 2 === 0 ? C.rowEven : C.rowAlt,
+                          borderBottom: `1px solid ${C.rowBorder}` }}>
+                        <td style={{ padding: '10px 16px', color: C.cellMeta, whiteSpace: 'nowrap' }}>
+                          {formatDate(entry.timestamp)}
+                        </td>
+                        <td style={{ padding: '10px 16px' }}>
+                          <div style={{ fontWeight: 600, color: C.cellPrimary }}>{entry.userName}</div>
+                          <div style={{ color: C.cellMeta, marginTop: 1 }}>{entry.userRole}</div>
+                        </td>
+                        <td style={{ padding: '10px 16px' }}>
+                          <span style={{ padding: '3px 8px', borderRadius: 4, fontWeight: 600,
+                            fontSize: 10, background: sty.bg, color: sty.txt }}>
+                            {actionLabel}
+                          </span>
+                        </td>
+                        <td style={{ padding: '10px 16px', color: C.cellBody }}>
+                          {entry.resourceType}
+                          {entry.resourceRef && (
+                            <div style={{ fontFamily: 'monospace', color: C.cellMeta, marginTop: 1 }}>
+                              {entry.resourceRef.slice(0, 8)}…
+                            </div>
+                          )}
+                        </td>
+                        <td style={{ padding: '10px 16px', color: C.cellBody, maxWidth: 320 }}>
+                          {entry.detail || '—'}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+      </div>
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 }

@@ -100,6 +100,8 @@ router.post('/triage/run', async (req, res) => {
 
   const prompt = `You are a healthcare risk management AI. Analyze this batch of ${safeEvents.length} patient safety events and return ONLY raw JSON — no markdown, no code fences.
 
+CRITICAL JSON RULES: (1) Do NOT use double-quote characters inside any string value — use single quotes if quoting is needed. (2) Keep all string values to 1-2 sentences max. (3) Do not truncate the JSON — output the complete closing braces. (4) Limit fall_analysis five_ps_analysis to at most 5 fall events. (5) Limit top_3 to exactly 3 events.
+
 EVENTS (id|type|severity|sentinel|harm|unit|narrative|factors):
 ${eventList}
 ${policySection}
@@ -116,9 +118,31 @@ Priority rules: immediate=death or sentinel=true; high=severe harm, PSSM escalat
     });
 
     const rawText = message.content[0].text.trim();
+    console.log(`[VRM] raw response length: ${rawText.length} chars, stop_reason: ${message.stop_reason}`);
+
     // Strip markdown code fences if Claude added them despite instructions
-    const jsonText = rawText.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '').trim();
-    const triageResult = JSON.parse(jsonText);
+    let jsonText = rawText.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '').trim();
+
+    // If response was truncated (stop_reason=max_tokens), attempt to close the JSON
+    if (message.stop_reason === 'max_tokens') {
+      console.warn('[VRM] Response hit max_tokens — attempting to close truncated JSON');
+      // Close any open string, then close all open objects/arrays
+      const openBraces  = (jsonText.match(/\{/g) || []).length - (jsonText.match(/\}/g) || []).length;
+      const openBrackets = (jsonText.match(/\[/g) || []).length - (jsonText.match(/\]/g) || []).length;
+      if (!jsonText.endsWith('"') && !jsonText.endsWith('}') && !jsonText.endsWith(']')) {
+        jsonText += '"';
+      }
+      jsonText += ']'.repeat(Math.max(0, openBrackets)) + '}'.repeat(Math.max(0, openBraces));
+    }
+
+    let triageResult;
+    try {
+      triageResult = JSON.parse(jsonText);
+    } catch (parseErr) {
+      console.error('[VRM] JSON parse failed, position hint:', parseErr.message);
+      console.error('[VRM] Response snippet at error:', jsonText.substring(Math.max(0, (parseErr.message.match(/position (\d+)/) || [0, 200])[1] - 100), parseInt((parseErr.message.match(/position (\d+)/) || [0, 400])[1]) + 100));
+      throw parseErr;
+    }
 
     const run = {
       runId,

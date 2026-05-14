@@ -1,0 +1,90 @@
+FALL PREVENTION POLICY
+[Facility Name]
+Policy Number: FP-001  |  Department: Nursing / Patient Safety  |  Effective Date: 02/02/2026  |  Rev. 1
+
+1. PURPOSE
+This policy establishes [Facility Name]s best-practice standards for the prevention of patient falls and fall-related injuries during inpatient care. It defines the universal precautions, comfort and safety rounding practices, and multidisciplinary responsibilities that staff are expected to follow on every unit, for every patient, on every shift.
+
+2. SCOPE
+This policy applies to all clinical and non-clinical staff, contracted personnel, students, and volunteers who provide care or services to patients in any inpatient or observation setting at [Facility Name]. It covers all adult and pediatric patients from admission through discharge.
+
+3. DEFINITIONS
+Fall: An unplanned descent to the floor or extension of the floor (e.g., trash can, step, chair) with or without injury, whether or not assisted by a staff member.
+Assisted Fall: A fall in which a staff member attempts to minimize the impact of the descent by slowing the patient or guiding them to the floor.
+Universal Fall Precautions: Safety measures that apply to all patients regardless of fall risk score.
+Fall Risk Assessment: A standardized evaluation of patient-specific risk factors (e.g., Morse Fall Scale, Hendrich II, Humpty Dumpty for pediatrics) completed on admission, every shift, after a change in condition, and after any fall.
+High-Risk Patient: A patient whose fall risk score meets or exceeds the threshold defined by the assessment tool in use on the unit.
+
+4. POLICY STATEMENT
+[Facility Name] is committed to providing a safe care environment in which every patient is assessed for fall risk, receives universal fall precautions, and when identified as high risk receives an individualized, multidisciplinary fall prevention plan. Fall prevention is the shared responsibility of every member of the care team and is supported through patient and family engagement, environmental safety, medication review, and ongoing staff education.
+
+5. PROCEDURE
+All patients shall receive Universal Fall Precautions (Section 5.1) and Comfort Rounding (Section 5.2). Patients identified as high risk on assessment shall receive the additional individualized interventions described in Section 5.3.
+
+5.1 Universal Fall Precautions
+The following precautions apply to all patients on every unit, every shift:
+- Familiarize the patient with the environment and demonstrate call light use; keep call light within reach at all times.
+- Maintain personal possessions within safe patient reach.
+- Ensure sturdy handrails are present in the patient bathroom, room, and hallway.
+- Place the hospital bed in the low position when the patient is resting; raise to a comfortable height for transfers.
+- Keep hospital bed brakes locked at all times.
+- Keep wheelchair wheel locks in the locked position when stationary.
+- Ensure the patient wears nonslip, comfortable, well-fitting footwear.
+- Use night lights or supplemental lighting as needed.
+- Keep floor surfaces clean and dry; clean up spills promptly.
+- Keep patient care areas uncluttered and follow safe patient-handling practices.
+
+5.2 Comfort Rounding — The 5 Ps
+Nursing staff shall conduct hourly rounds (every two hours overnight) addressing each of the following at every round:
+P - Pain: Assess the patients pain level. Provide pain medicine if needed.
+P - Personal Needs: Offer help using the toilet; offer hydration and nutrition; empty commodes/urinals.
+P - Position: Help the patient into a comfortable position; turn immobile patients to maintain skin integrity.
+P - Placement: Ensure call light, phone, reading material, and toileting equipment are within easy reach.
+P - Prevent Falls: Ask patient/family to use call light before the patient attempts to get out of bed.
+
+6. ROLES AND RESPONSIBILITIES
+Nurse: Complete and document fall risk assessments on schedule. Monitor and document changes in medical condition. Report patient problems to the medical provider; obtain consults and orders as needed. Educate patient and family; supervise aides. Ensure required supplies and equipment (e.g., walker) are available.
+Nurse Aide: Evaluate the safety of the patients environment during care tasks. Perform care plan tasks and report completion to the nurse. Report any changes in the patients condition to the nurse promptly.
+Treating Medical Provider: Review the need for specific rehabilitation therapy. Write orders for specific interventions, including activity orders. Review medications for fall risk and adjust as needed.
+Pharmacist: Review medication lists for patients at high fall risk. Suggest alternative medications or dosing regimens to the medical provider.
+Physical/Occupational Therapist: Provide skilled therapy to improve ambulation, transfers, and activities of daily living. Recommend and train patients in the safe use of assistive devices or adaptive equipment. Review activity orders and request adjustments from the medical provider as needed.
+
+7. FALL RISK ASSESSMENT
+Nursing staff shall complete a validated fall risk assessment on every patient at each of the following times:
+- On admission, within four (4) hours of arrival to the unit.
+- At the start of every shift.
+- With any significant change in condition (e.g., new sedating medication, new neurologic symptom, post-procedure).
+- Following any fall, prior to resuming activity.
+
+Patients meeting the high-risk threshold shall be visually identified per unit standard (e.g., yellow armband, door signage, EHR flag) and shall have an individualized fall prevention plan documented in the care plan.
+
+8. POST-FALL MANAGEMENT
+- Assess the patient for injury before moving; obtain medical provider evaluation prior to repositioning if injury is suspected.
+- Notify the treating medical provider and document the event in the medical record.
+- Notify the patients family or designated contact per [Facility Name] notification standards.
+- Complete a fall event report in the safety-event reporting system within 24 hours.
+- Reassess fall risk and update the individualized fall prevention plan.
+- Conduct a post-fall huddle with the care team to identify contributing factors and corrective actions.
+
+9. DOCUMENTATION
+The following shall be documented in the electronic health record (EHR):
+- Fall risk assessment score and all reassessments.
+- Universal fall precautions in place.
+- Individualized interventions for high-risk patients.
+- Patient and family education provided, including understanding and willingness to participate.
+- Any fall event, post-fall assessment, and all notifications made.
+
+10. EDUCATION AND COMPETENCY
+All clinical staff shall complete fall prevention education at orientation and annually thereafter. Patient and family education shall be provided on admission and reinforced throughout the stay, with teach-back to confirm understanding.
+
+11. QUALITY MONITORING
+The Patient Safety Committee shall review fall rates, injury rates, and post-fall huddle findings on at least a quarterly basis and report trends to nursing leadership. Performance targets shall be benchmarked against national rates published by the National Database of Nursing Quality Indicators (NDNQI) and the Agency for Healthcare Research and Quality (AHRQ).
+
+12. REFERENCES
+- AHRQ. Preventing Falls in Hospitals: A Toolkit for Improving Quality of Care. AHRQ Publication No. 13-0015-EF. 2013.
+- AHRQ Patient Safety Network (PSNet). Falls. Primer.
+- Dykes PC, et al. Fall prevention in acute care hospitals: a randomized trial. JAMA. 2010;304(17):1912-1918.
+- The Joint Commission. National Patient Safety Goals — Hospital Program (current edition).
+- CMS. Hospital-Acquired Conditions — Patient Falls and Trauma.
+
+Approved by Patient Safety Committee | Rev. 02/02/2026 | FP-001 | Page 1 of 2

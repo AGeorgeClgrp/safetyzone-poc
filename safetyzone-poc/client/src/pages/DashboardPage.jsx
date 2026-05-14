@@ -106,11 +106,11 @@ const MODULES = [
 // ── Stat card ─────────────────────────────────────────────────────────────────
 function StatCard({ value, label, color }) {
   return (
-    <div className="bg-white/10 backdrop-blur-sm rounded-xl px-6 py-5 text-center">
-      <div className={`text-3xl font-light ${color}`}>
+    <div className="bg-[#0a1628]/60 backdrop-blur-sm border border-white/10 rounded-xl px-6 py-5">
+      <div className={`text-3xl font-semibold ${color}`}>
         {value ?? '—'}
       </div>
-      <div className="text-sm text-white/70 mt-1">{label}</div>
+      <div className="text-xs text-white/50 mt-1.5 font-medium">{label}</div>
     </div>
   );
 }
@@ -170,45 +170,48 @@ export default function DashboardPage() {
   const firstName = user?.name?.split(' ')[0] || 'Welcome';
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-[#f0f4f9]">
 
-      {/* ── Top bar ── */}
-      <div className="bg-indigo-900 px-6 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="text-2xl">🛡️</span>
-          <div>
-            <span className="text-white font-medium text-sm">SafetyZone</span>
-            <span className="text-indigo-300 text-xs ml-2">Healthcare Risk Platform</span>
-          </div>
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="text-right">
-            <p className="text-white text-sm font-medium leading-tight">{user?.name}</p>
-            <p className="text-indigo-300 text-xs leading-tight">{user?.role}</p>
-          </div>
-          <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white text-sm font-medium">
-            {user?.name?.[0] || 'U'}
-          </div>
-          <button
-            onClick={handleLogout}
-            className="text-xs text-indigo-200 hover:text-white border border-indigo-600 hover:border-indigo-400 px-3 py-1.5 rounded transition-colors"
-          >
-            Sign out
-          </button>
-        </div>
-      </div>
-
-      {/* ── Hero ── */}
-      <div className="bg-gradient-to-br from-indigo-900 via-indigo-800 to-indigo-700 px-6 py-10">
+      {/* ── Hero (top bar + stats merged) ── */}
+      <div className="bg-gradient-to-r from-[#0f1e3d] via-[#0d2a6b] to-[#1a4fbe] px-6 pt-4 pb-10">
         <div className="max-w-6xl mx-auto">
-          <div className="mb-6">
-            <h1 className="text-3xl font-light text-white mb-2">{firstName}</h1>
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-400" />
-              <span className="text-sm text-white/70">{user?.role} · SafetyZone</span>
+
+          {/* top bar */}
+          <div className="flex items-center justify-between mb-10">
+            <div className="flex items-center gap-2.5">
+              <span className="text-2xl">🛡️</span>
+              <div>
+                <span className="text-white font-medium text-sm">SafetyZone</span>
+                <span className="text-blue-300 text-xs ml-2">Healthcare Risk Platform</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="text-right">
+                <p className="text-white text-sm font-medium leading-tight">{user?.name}</p>
+                <p className="text-blue-300 text-xs leading-tight">{user?.role}</p>
+              </div>
+              <div className="w-8 h-8 rounded-full bg-blue-600/60 border border-blue-400/30 flex items-center justify-center text-white text-sm font-medium">
+                {user?.name?.[0] || 'U'}
+              </div>
+              <button
+                onClick={handleLogout}
+                className="text-xs text-blue-200 hover:text-white border border-blue-500/40 hover:border-blue-300/60 px-3 py-1.5 rounded transition-colors"
+              >
+                Sign out
+              </button>
             </div>
           </div>
 
+          {/* greeting */}
+          <div className="mb-6">
+            <h1 className="text-3xl font-semibold text-white mb-1.5">{firstName}</h1>
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-400" />
+              <span className="text-sm text-blue-200/80">{user?.role} · SafetyZone</span>
+            </div>
+          </div>
+
+          {/* stat tiles */}
           <div className="grid grid-cols-4 gap-4">
             <StatCard
               value={stats ? stats.total.toLocaleString() : '…'}
@@ -217,20 +220,21 @@ export default function DashboardPage() {
             />
             <StatCard
               value={stats ? stats.withHarm.toLocaleString() : '…'}
-              label="With Patient Harm"
+              label="Open Reports"
               color="text-amber-300"
             />
             <StatCard
               value={stats ? stats.noHarm.toLocaleString() : '…'}
-              label="No Harm / Near Miss"
+              label="Resolved"
               color="text-emerald-300"
             />
             <StatCard
               value={stats ? `${stats.safetyRate}%` : '…'}
-              label="No-Harm Rate"
+              label="Resolution Rate"
               color="text-purple-300"
             />
           </div>
+
         </div>
       </div>
 

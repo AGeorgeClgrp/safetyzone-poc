@@ -2,6 +2,30 @@ import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
+// ── Palette — matches DashboardPage C tokens ──────────────────────────────────
+const N = {
+  bg:           '#0A1628',
+  border:       'rgba(255,255,255,0.08)',
+  activeBg:     'rgba(30,95,173,0.40)',
+  activeBar:    '#1E5FAD',
+  hoverBg:      'rgba(255,255,255,0.06)',
+  textActive:   '#FFFFFF',
+  textInactive: 'rgba(186,212,255,0.70)',
+  textHover:    '#FFFFFF',
+  badgeBg:      'rgba(30,95,173,0.45)',
+  badgeTxt:     '#BAD4FF',
+  tooltipBg:    '#0D1F3C',
+  tooltipBdr:   'rgba(30,95,173,0.50)',
+  logoBrand:    '#FFFFFF',
+  logoSub:      'rgba(186,212,255,0.55)',
+  userName:     '#FFFFFF',
+  userRole:     'rgba(186,212,255,0.65)',
+  logoutBdr:    '#1E5FAD',
+  logoutTxt:    '#93B8E8',
+  logoutHovBg:  'rgba(30,95,173,0.30)',
+  toggleTxt:    'rgba(186,212,255,0.60)',
+};
+
 const NAV_ITEMS = [
   {
     to: '/dashboard',
@@ -86,12 +110,80 @@ const NAV_ITEMS = [
   },
 ];
 
+// ── Nav item with hover state ─────────────────────────────────────────────────
+function NavItem({ item, collapsed }) {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <div className="px-2 relative group">
+      <NavLink
+        to={item.to}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        style={({ isActive }) => ({
+          display: 'flex',
+          alignItems: 'center',
+          gap: 10,
+          padding: '7px 10px',
+          borderRadius: 8,
+          fontSize: 13,
+          fontWeight: isActive ? 600 : 400,
+          color: isActive || hovered ? N.textActive : N.textInactive,
+          background: isActive ? N.activeBg : hovered ? N.hoverBg : 'transparent',
+          borderLeft: isActive ? `2px solid ${N.activeBar}` : '2px solid transparent',
+          transition: 'background 0.15s, color 0.15s',
+          textDecoration: 'none',
+          justifyContent: collapsed ? 'center' : 'flex-start',
+        })}
+      >
+        <span style={{ flexShrink: 0 }}>{item.icon}</span>
+        {!collapsed && (
+          <>
+            <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {item.label}
+            </span>
+            {item.badge && (
+              <span style={{
+                fontSize: 10, fontWeight: 600,
+                background: N.badgeBg, color: N.badgeTxt,
+                padding: '2px 6px', borderRadius: 4, flexShrink: 0,
+              }}>
+                {item.badge}
+              </span>
+            )}
+          </>
+        )}
+      </NavLink>
+
+      {/* Tooltip when collapsed */}
+      {collapsed && (
+        <div style={{
+          position: 'absolute', left: '100%', top: '50%', transform: 'translateY(-50%)',
+          marginLeft: 8, padding: '6px 10px',
+          background: N.tooltipBg, border: `1px solid ${N.tooltipBdr}`,
+          color: '#FFFFFF', fontSize: 11, borderRadius: 6,
+          whiteSpace: 'nowrap', pointerEvents: 'none',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.25)',
+          zIndex: 50,
+        }} className="opacity-0 group-hover:opacity-100 transition-opacity">
+          {item.label}
+          {item.badge && (
+            <span style={{ marginLeft: 6, color: N.badgeTxt, fontWeight: 600 }}>{item.badge}</span>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Sidebar ───────────────────────────────────────────────────────────────────
 export default function NavBar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(
     () => localStorage.getItem('sz-sidebar-collapsed') === 'true'
   );
+  const [logoutHovered, setLogoutHovered] = useState(false);
+  const [toggleHovered, setToggleHovered] = useState(false);
 
   function toggle() {
     const next = !collapsed;
@@ -99,99 +191,113 @@ export default function NavBar() {
     localStorage.setItem('sz-sidebar-collapsed', String(next));
   }
 
-  function handleLogout() {
-    logout();
-    navigate('/login');
-  }
+  function handleLogout() { logout(); navigate('/login'); }
 
   return (
-    <div className={`flex-shrink-0 flex flex-col bg-indigo-900 h-full transition-all duration-200 ${collapsed ? 'w-14' : 'w-52'}`}>
+    <div style={{
+      background: N.bg,
+      width: collapsed ? 56 : 208,
+      flexShrink: 0,
+      display: 'flex',
+      flexDirection: 'column',
+      height: '100%',
+      transition: 'width 0.2s',
+    }}>
 
       {/* Logo */}
-      <div className={`flex items-center gap-2.5 px-3 py-4 border-b border-indigo-800 flex-shrink-0 ${collapsed ? 'justify-center' : ''}`}>
-        <span className="text-xl flex-shrink-0">🛡️</span>
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: 10,
+        padding: '14px 12px',
+        borderBottom: `1px solid ${N.border}`,
+        flexShrink: 0,
+        justifyContent: collapsed ? 'center' : 'flex-start',
+      }}>
+        <span style={{ fontSize: 18, flexShrink: 0 }}>🛡️</span>
         {!collapsed && (
           <div>
-            <p className="text-white font-medium text-sm leading-tight">SafetyZone</p>
-            <p className="text-indigo-400 text-xs leading-tight">Risk Platform</p>
+            <p style={{ color: N.logoBrand, fontWeight: 600, fontSize: 13, lineHeight: 1.2, margin: 0 }}>SafetyZone</p>
+            <p style={{ color: N.logoSub, fontSize: 10, lineHeight: 1.3, margin: 0 }}>Risk Platform</p>
           </div>
         )}
       </div>
 
       {/* Nav links */}
-      <nav className="flex-1 py-3 space-y-0.5 overflow-y-auto overflow-x-hidden">
-        {NAV_ITEMS.map((item) => (
-          <div key={item.to} className="px-2 relative group">
-            <NavLink
-              to={item.to}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-2.5 py-2 rounded-lg text-sm transition-colors ${
-                  isActive
-                    ? 'bg-indigo-700 text-white'
-                    : 'text-indigo-200 hover:bg-indigo-800 hover:text-white'
-                } ${collapsed ? 'justify-center' : ''}`
-              }
-            >
-              <span className="flex-shrink-0">{item.icon}</span>
-              {!collapsed && (
-                <>
-                  <span className="truncate flex-1">{item.label}</span>
-                  {item.badge && (
-                    <span className="text-xs bg-indigo-600 text-indigo-200 px-1.5 py-0.5 rounded flex-shrink-0">
-                      {item.badge}
-                    </span>
-                  )}
-                </>
-              )}
-            </NavLink>
-            {/* Tooltip when collapsed */}
-            {collapsed && (
-              <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2.5 py-1.5 bg-slate-800 text-white text-xs rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 shadow-lg">
-                {item.label}
-                {item.badge && <span className="ml-1.5 text-blue-300">{item.badge}</span>}
-              </div>
-            )}
-          </div>
-        ))}
+      <nav style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', padding: '10px 0' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          {NAV_ITEMS.map((item) => (
+            <NavItem key={item.to} item={item} collapsed={collapsed} />
+          ))}
+        </div>
       </nav>
 
       {/* Collapse toggle */}
-      <div className="border-t border-indigo-800 px-2 py-2 flex-shrink-0">
+      <div style={{ borderTop: `1px solid ${N.border}`, padding: '6px 8px', flexShrink: 0 }}>
         <button
           onClick={toggle}
-          className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-indigo-300 hover:text-white hover:bg-indigo-800 transition-colors ${collapsed ? 'justify-center' : ''}`}
+          onMouseEnter={() => setToggleHovered(true)}
+          onMouseLeave={() => setToggleHovered(false)}
           title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          style={{
+            width: '100%', display: 'flex', alignItems: 'center', gap: 10,
+            padding: '7px 10px', borderRadius: 8, border: 'none', cursor: 'pointer',
+            background: toggleHovered ? N.hoverBg : 'transparent',
+            color: toggleHovered ? N.textActive : N.toggleTxt,
+            justifyContent: collapsed ? 'center' : 'flex-start',
+            transition: 'background 0.15s, color 0.15s',
+          }}
         >
-          <svg
-            className={`w-4 h-4 flex-shrink-0 transition-transform duration-200 ${collapsed ? 'rotate-180' : ''}`}
-            fill="none" stroke="currentColor" viewBox="0 0 24 24"
-          >
+          <svg style={{
+            width: 15, height: 15, flexShrink: 0,
+            transform: collapsed ? 'rotate(180deg)' : 'none',
+            transition: 'transform 0.2s',
+          }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
           </svg>
-          {!collapsed && <span className="text-xs">Collapse</span>}
+          {!collapsed && <span style={{ fontSize: 11 }}>Collapse</span>}
         </button>
       </div>
 
       {/* User + logout */}
-      <div className="border-t border-indigo-800 p-3 flex-shrink-0">
+      <div style={{ borderTop: `1px solid ${N.border}`, padding: 12, flexShrink: 0 }}>
         {collapsed ? (
           <button
             onClick={handleLogout}
             title="Logout"
-            className="w-full flex justify-center text-indigo-300 hover:text-white py-1 transition-colors"
+            onMouseEnter={() => setLogoutHovered(true)}
+            onMouseLeave={() => setLogoutHovered(false)}
+            style={{
+              width: '100%', display: 'flex', justifyContent: 'center',
+              padding: '4px 0', border: 'none', cursor: 'pointer', borderRadius: 6,
+              background: 'transparent',
+              color: logoutHovered ? N.textActive : N.toggleTxt,
+              transition: 'color 0.15s',
+            }}
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg style={{ width: 15, height: 15 }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                 d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
             </svg>
           </button>
         ) : (
           <>
-            <p className="text-white text-xs font-medium truncate">{user?.name}</p>
-            <p className="text-indigo-400 text-xs truncate mb-2">{user?.role}</p>
+            <p style={{ color: N.userName, fontSize: 11, fontWeight: 600, margin: '0 0 2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {user?.name}
+            </p>
+            <p style={{ color: N.userRole, fontSize: 10, margin: '0 0 10px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {user?.role}
+            </p>
             <button
               onClick={handleLogout}
-              className="w-full text-xs bg-indigo-700 hover:bg-indigo-600 text-indigo-200 hover:text-white px-2 py-1.5 rounded-lg transition-colors"
+              onMouseEnter={() => setLogoutHovered(true)}
+              onMouseLeave={() => setLogoutHovered(false)}
+              style={{
+                width: '100%', fontSize: 11, fontWeight: 500,
+                border: `1px solid ${N.logoutBdr}`,
+                color: logoutHovered ? '#FFFFFF' : N.logoutTxt,
+                background: logoutHovered ? N.logoutHovBg : 'transparent',
+                padding: '6px 8px', borderRadius: 7, cursor: 'pointer',
+                transition: 'background 0.15s, color 0.15s',
+              }}
             >
               Logout
             </button>

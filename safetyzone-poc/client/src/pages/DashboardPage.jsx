@@ -38,6 +38,22 @@ const MODULES = [
     ),
   },
   {
+    id: 'trends',
+    title: 'Trend Analysis',
+    description: 'Visualize events by harm scale, event type, location, and contributing factors with cross-reference heatmaps.',
+    href: '/trends',
+    accent: 'border-cyan-500',
+    iconBg: 'bg-cyan-50',
+    badge: null,
+    external: false,
+    icon: (
+      <svg className="w-6 h-6 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+          d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+      </svg>
+    ),
+  },
+  {
     id: 'compliance',
     title: 'Compliance & Audit Readiness',
     description: 'Track regulatory deadlines, audit checklists, and submission status.',

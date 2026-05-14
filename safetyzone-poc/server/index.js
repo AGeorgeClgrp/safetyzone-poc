@@ -9,6 +9,7 @@ const auditRouter = require('./routes/audit');
 const sessionRouter = require('./routes/session');
 const vrmRouter = require('./routes/vrm');
 const policyRouter = require('./routes/policy');
+const trendsRouter = require('./routes/trends');
 
 const app = express();
 const PORT = 3001;
@@ -29,6 +30,7 @@ app.use('/api/audit', auditRouter);
 app.use('/api/session', sessionRouter);
 app.use('/api/vrm', vrmRouter);
 app.use('/api/policy', policyRouter);
+app.use('/api/trends', trendsRouter);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });

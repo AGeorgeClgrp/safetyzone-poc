@@ -10,6 +10,7 @@ import AttestationsPage from './pages/AttestationsPage';
 import VrmPage from './pages/VrmPage';
 import CompliancePage from './pages/CompliancePage';
 import DashboardPage from './pages/DashboardPage';
+import TrendsPage from './pages/TrendsPage';
 import NavBar from './components/NavBar';
 
 function ProtectedRoute({ children }) {
@@ -89,6 +90,16 @@ export default function App() {
           <ProtectedRoute>
             <AppLayout>
               <VrmPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/trends"
+        element={
+          <ProtectedRoute>
+            <AppLayout>
+              <TrendsPage />
             </AppLayout>
           </ProtectedRoute>
         }

@@ -9,6 +9,7 @@ import SessionSummaryPage from './pages/SessionSummaryPage';
 import AttestationsPage from './pages/AttestationsPage';
 import VrmPage from './pages/VrmPage';
 import CompliancePage from './pages/CompliancePage';
+import DashboardPage from './pages/DashboardPage';
 import NavBar from './components/NavBar';
 
 function ProtectedRoute({ children }) {
@@ -19,9 +20,9 @@ function ProtectedRoute({ children }) {
 
 function AppLayout({ children }) {
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="flex h-screen bg-slate-50 overflow-hidden">
       <NavBar />
-      <main className="pt-16">{children}</main>
+      <main className="flex-1 min-w-0 flex flex-col overflow-hidden">{children}</main>
     </div>
   );
 }
@@ -102,8 +103,16 @@ export default function App() {
           </ProtectedRoute>
         }
       />
-      <Route path="/" element={<Navigate to={user ? '/queue' : '/login'} replace />} />
-      <Route path="*" element={<Navigate to={user ? '/queue' : '/login'} replace />} />
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <DashboardPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route path="/" element={<Navigate to={user ? '/dashboard' : '/login'} replace />} />
+      <Route path="*" element={<Navigate to={user ? '/dashboard' : '/login'} replace />} />
     </Routes>
   );
 }

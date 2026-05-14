@@ -85,10 +85,10 @@ router.post('/triage/run', async (req, res) => {
     ? `\n\nACTIVE POLICY ON FILE — Fall Prevention Policy FP-001:\n${policyText}\n`
     : '';
   const policyField = policyText
-    ? `,"policy_alignment":[{"event_id":"...","policy_section":"Section X.Y","gap":"What the policy requires that is not evidenced in this event.","suggestion":"Specific corrective action per policy."}]`
+    ? `,"policy_alignment":{"coverage_rating":"poor|fair|good","coverage_summary":"2-3 sentences: overall assessment of how well the active policy covers the event types in this batch.","gaps":[{"event_id":"...","event_type":"Trigger/event type name","compliance_type":"non_compliance|missing_policy","policy_section":"Section X.Y — Section Title","gap":"One sentence: what the policy requires vs. what this event shows.","suggestion":"One sentence: specific corrective action."}]}`
     : '';
   const policyRule = policyText
-    ? '\npolicy_alignment: Only include fall-related events where a specific, documentable gap against Fall Prevention Policy FP-001 exists. Cite the exact section. One sentence per field. Omit events with no gap.'
+    ? '\npolicy_alignment rules: coverage_rating=poor if >3 event types lack coverage, fair if 1-3, good if 0. compliance_type: non_compliance=policy exists but was not followed; missing_policy=no applicable policy covers this event type. Only include events with a clear documentable gap. One sentence per gap and suggestion. Omit events with no gap.'
     : '';
 
   const prompt = `You are a healthcare risk management AI. Analyze this batch of ${safeEvents.length} patient safety events and return ONLY raw JSON — no markdown, no code fences.

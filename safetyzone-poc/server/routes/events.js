@@ -132,6 +132,35 @@ router.get('/', async (req, res) => {
   }
 });
 
+// GET /api/events/stats
+router.get('/stats', async (req, res) => {
+  try {
+    const pool = await getPool();
+    const result = await pool.request().query(`
+      SELECT
+        COUNT(*) AS total,
+        SUM(CASE WHEN Severity IN ('severe','death') THEN 1 ELSE 0 END) AS critical,
+        SUM(CASE WHEN Sentinel = 'Yes' THEN 1 ELSE 0 END) AS sentinel,
+        SUM(CASE WHEN Harm_Event = 'No' THEN 1 ELSE 0 END) AS no_harm,
+        SUM(CASE WHEN Harm_Event = 'Yes' THEN 1 ELSE 0 END) AS with_harm
+      FROM synthetic_safety_events
+    `);
+    const row = result.recordset[0];
+    const total = row.total || 0;
+    res.json({
+      total,
+      critical: row.critical || 0,
+      sentinel: row.sentinel || 0,
+      noHarm: row.no_harm || 0,
+      withHarm: row.with_harm || 0,
+      safetyRate: total > 0 ? Math.round((row.no_harm / total) * 100) : 0,
+    });
+  } catch (err) {
+    console.error('GET /api/events/stats error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // GET /api/events/:id
 router.get('/:id', async (req, res) => {
   try {
